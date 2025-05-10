@@ -1,6 +1,10 @@
 const express = require("express")
-const users = express.Router();
+const users = express.Router()
 const DB = require('../db/dbConn.js')
+const multer = require('multer')
+const bcrypt = require('bcrypt')
+
+let upload_dest = multer({ dest: 'uploads/' })
 
 users.post('/login', async (req, res) => {
     var username = req.body.username;
@@ -79,6 +83,36 @@ users.get('/list', async (req, res, next) => {
         res.sendStatus(500)
     }
 })
+
+
+users.post('/register', upload_dest.single('file'), async (req, res) => {
+    try {
+        const { username, password, email } = req.body;
+        const file = req.file;
+
+        if (!username || !password || !email || !file) {
+            return res.status(400).json({ error: 'All fields are required, including the file' });
+        }
+
+        const existingUsers = await DB.RegisterUser(username);
+        if (existingUsers.length > 0) {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await DB.CreateUser(username, hashedPassword, email, file.path);
+
+        return res.status(201).json({
+            message: 'Registration successful',
+            user: { username, email }
+        });
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        return res.status(500).json({ error: 'An error occurred on the server' });
+    }
+});
 
 
 module.exports = users
