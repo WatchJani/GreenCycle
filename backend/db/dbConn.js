@@ -27,6 +27,45 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.GetUsersWithPermissions = () => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 
+                u.user_id,
+                u.username,
+                r.name AS role_name,
+                r.description AS role_description
+            FROM user u
+            JOIN role_user ru ON u.user_id = ru.user_id
+            JOIN role r ON ru.role_id = r.role_id
+            ORDER BY u.user_id;
+        `;
+
+        conn.query(query, (err, results) => {
+            if (err) return reject(err);
+
+            const usersMap = new Map();
+
+            results.forEach(row => {
+                if (!usersMap.has(row.user_id)) {
+                    usersMap.set(row.user_id, {
+                        user_id: row.user_id,
+                        username: row.username,
+                        roles: []
+                    });
+                }
+
+                usersMap.get(row.user_id).roles.push({
+                    name: row.role_name,
+                    description: row.role_description
+                });
+            });
+
+            resolve(Array.from(usersMap.values()));
+        });
+    });
+};
+
 dataPool.CreateUser = (username, hashedPassword, email, filePath) => {
     return new Promise((resolve, reject) => {
         conn.beginTransaction((err) => {

@@ -41,6 +41,16 @@ users.post('/login', async (req, res) => {
     }
 });
 
+users.get('/roles', async (req, res) => {
+    try {
+        const users = await DB.GetUsersWithPermissions();
+        res.status(200).json(users);
+    } catch (err) {
+        console.error("Error fetching users with permissions:", err);
+        res.status(500).json({ error: 'Server error while fetching users and permissions.' });
+    }
+});
+
 users.get('/session', async (req, res, next) => {
     try {
         console.log("session data: ")
