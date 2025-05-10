@@ -54,6 +54,25 @@ dataPool.AssignRoleToUser = (user_id, role_id) => {
     });
 }
 
+dataPool.RemoveUserRole = (user_id, role_id) => {
+    return new Promise((resolve, reject) => {
+        const deleteQuery = `
+            DELETE FROM role_user
+            WHERE user_id = ? AND role_id = ?
+        `;
+
+        conn.query(deleteQuery, [user_id, role_id], (err, result) => {
+            if (err) return reject({ status: 500, message: 'Error removing role', err });
+
+            if (result.affectedRows === 0) {
+                return reject({ status: 404, message: 'Role not found for this user.' });
+            }
+
+            resolve({ message: 'Role removed successfully.' });
+        });
+    });
+}
+
 dataPool.GetUserRolesByUserId = (userId) => {
     return new Promise((resolve, reject) => {
         const query = `
