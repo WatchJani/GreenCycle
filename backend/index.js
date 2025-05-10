@@ -7,7 +7,7 @@ const port = process.env.PORT || 5009
 
 // import local files
 const user = require('./routes/user')
-
+const role = require('./routes/role')
 
 const session = require('express-session')
 
@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
 
 // app.use('/project', novice)
 app.use('/user', user)
-
+app.use('/role', role)
 
 
 // start the express server

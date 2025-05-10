@@ -10,7 +10,6 @@ users.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        console.log("Please enter Username and Password!");
         return res.status(400).json({ success: false, message: "Please enter Username and Password!" });
     }
 
@@ -18,36 +17,32 @@ users.post('/login', async (req, res) => {
         const queryResult = await DB.GetUserByUserName(username);
 
         if (queryResult.length === 0) {
-            console.log("USER NOT REGISTERED");
             return res.status(404).json({ success: false, message: "User not registered" });
         }
 
         const user = queryResult[0];
-
         const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
-        if (passwordMatch) {
-            console.log("LOGIN OK");
-            req.session.logged_in = true;
-            return res.status(200).json({ success: true, message: "Login successful" });
-        } else {
-            console.log("INCORRECT PASSWORD");
+        if (!passwordMatch) {
             return res.status(401).json({ success: false, message: "Incorrect password" });
         }
+
+        // Dohvati role korisnika iz baze
+        const roles = await DB.GetUserRolesByUserId(user.user_id); // npr: ['admin', 'editor']
+
+        // Snimi u sesiju
+        req.session.logged_in = true;
+        req.session.user = {
+            user_id: user.user_id,
+            username: user.username,
+            roles: roles // niz rola
+        };
+
+        return res.status(200).json({ success: true, message: "Login successful" });
 
     } catch (err) {
         console.error("Login error:", err);
         return res.status(500).json({ success: false, message: "Server error" });
-    }
-});
-
-users.get('/roles', async (req, res) => {
-    try {
-        const users = await DB.GetUsersWithPermissions();
-        res.status(200).json(users);
-    } catch (err) {
-        console.error("Error fetching users with permissions:", err);
-        res.status(500).json({ error: 'Server error while fetching users and permissions.' });
     }
 });
 

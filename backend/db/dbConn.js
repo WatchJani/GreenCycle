@@ -27,6 +27,23 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.GetUserRolesByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT r.name 
+            FROM role_user ru
+            JOIN role r ON ru.role_id = r.role_id
+            WHERE ru.user_id = ?
+        `;
+
+        conn.query(query, [userId], (err, results) => {
+            if (err) return reject(err);
+            resolve(results.map(row => row.name));
+        });
+    });
+}
+
+
 dataPool.GetUsersWithPermissions = () => {
     return new Promise((resolve, reject) => {
         const query = `
