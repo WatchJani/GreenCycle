@@ -29,10 +29,35 @@ dataPool.GetUserByUserName = (username) => {
 
 dataPool.CreateUser = (username, hashedPassword, email, filePath) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO user (username, password_hash, email, profile_picture) VALUES (?, ?, ?, ?)';
-        conn.query(query, [username, hashedPassword, email, filePath], (err, res) => {
+        conn.beginTransaction((err) => {
             if (err) return reject(err);
-            return resolve(res);
+
+            //insert user in user
+            const insertUserQuery = 'INSERT INTO user (username, password_hash, email, profile_picture) VALUES (?, ?, ?, ?)';
+            conn.query(insertUserQuery, [username, hashedPassword, email, filePath], (err, result) => {
+                if (err) {
+                    return conn.rollback(() => reject(err));
+                }
+
+                const userId = result.insertId;
+                const roleId = 3; // default "user"
+
+                // 2. insert in role_user
+                const insertRoleUserQuery = 'INSERT INTO role_user (role_id, user_id) VALUES (?, ?)';
+                conn.query(insertRoleUserQuery, [roleId, userId], (err, result2) => {
+                    if (err) {
+                        return conn.rollback(() => reject(err));
+                    }
+
+                    // 3. Commit transakcije
+                    conn.commit((err) => {
+                        if (err) {
+                            return conn.rollback(() => reject(err));
+                        }
+                        return resolve({ userId, message: 'User and role inserted successfully' });
+                    });
+                });
+            });
         });
     });
 }
