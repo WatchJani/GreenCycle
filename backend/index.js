@@ -3,11 +3,12 @@ require('dotenv').config()
 const app = express()
 const cors = require("cors")
 const path = require('path')
-const port = process.env.PORT || 5009
+const port = process.env.PORT || 12345
 
 // import local files
 const user = require('./routes/user')
 const role = require('./routes/role')
+const material = require('./routes/material')
 
 const session = require('express-session')
 
@@ -22,7 +23,7 @@ app.use(session({
 //Some configurations
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5009',
+    origin: 'http://localhost:12345',
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
     credentials: true
 }))
@@ -35,7 +36,6 @@ app.use(cors({
 }))
 
 
-
 // actual routes
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"))
@@ -44,6 +44,7 @@ app.get("/", (req, res) => {
 // app.use('/project', novice)
 app.use('/user', user)
 app.use('/role', role)
+app.use('/material', material)
 
 
 // start the express server

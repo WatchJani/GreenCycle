@@ -27,17 +27,15 @@ users.post('/login', async (req, res) => {
             return res.status(401).json({ success: false, message: "Incorrect password" });
         }
 
-        // Dohvati role korisnika iz baze
-        const roles = await DB.GetUserRolesByUserId(user.user_id); // npr: ['admin', 'editor']
+        const roles = await DB.GetUserRolesByUserId(user.user_id);
 
-        // Snimi u sesiju
         req.session.logged_in = true;
         req.session.user = {
             user_id: user.user_id,
             username: user.username,
-            roles: roles // niz rola
+            roles: roles
         };
-
+        
         return res.status(200).json({ success: true, message: "Login successful" });
 
     } catch (err) {

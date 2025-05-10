@@ -27,6 +27,96 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+
+dataPool.AddMaterial = (material) => {
+    const {
+        category,
+        description,
+        is_ecologically,
+        is_sensitive,
+        unit,
+        name
+    } = material;
+
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO material (
+                category,
+                description,
+                is_ecologically,
+                is_sensitive,
+                unit,
+                name
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        const values = [
+            category,
+            description,
+            is_ecologically,
+            is_sensitive,
+            unit,
+            name
+        ];
+
+        conn.query(query, values, (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+        });
+    });
+};
+
+dataPool.DeleteMaterial = (material_id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM material WHERE material_id = ?';
+
+        conn.query(query, [material_id], (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+        });
+    });
+};
+
+dataPool.EditMaterial = (material_id, material) => {
+    const {
+        category,
+        description,
+        is_ecologically,
+        is_sensitive,
+        unit,
+        name
+    } = material;
+
+    return new Promise((resolve, reject) => {
+        const query = `
+            UPDATE material SET
+                category = ?,
+                description = ?,
+                is_ecologically = ?,
+                is_sensitive = ?,
+                unit = ?,
+                name = ?
+            WHERE material_id = ?
+        `;
+
+        const values = [
+            category,
+            description,
+            is_ecologically,
+            is_sensitive,
+            unit,
+            name,
+            material_id
+        ];
+
+        conn.query(query, values, (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+        });
+    });
+};
+
+
 dataPool.AssignRoleToUser = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
         const checkQuery = `
