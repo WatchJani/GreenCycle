@@ -6,9 +6,7 @@ const path = require('path')
 const port = process.env.PORT || 5009
 
 // import local files
-// const novice = require('./routes/novice')
-// const users = require('./routes/users')
-// const upload = require('./routes/upload')
+const user = require('./routes/user')
 
 
 const session = require('express-session')
@@ -44,10 +42,8 @@ app.get("/", (req, res) => {
 })
 
 // app.use('/project', novice)
-// app.use('/user', users)
-// app.use('/comment', upload)
-// app.use('/material', upload)
-// app.use('/report', upload)
+app.use('/user', user)
+
 
 
 // start the express server
