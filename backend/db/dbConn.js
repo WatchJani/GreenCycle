@@ -27,6 +27,33 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.AssignRoleToUser = (user_id, role_id) => {
+    return new Promise((resolve, reject) => {
+        const checkQuery = `
+            SELECT * FROM role_user
+            WHERE user_id = ? AND role_id = ?
+        `;
+
+        conn.query(checkQuery, [user_id, role_id], (err, results) => {
+            if (err) return reject({ status: 500, message: 'Error checking role existence', err });
+
+            if (results.length > 0) {
+                return reject({ status: 409, message: 'This user already has that role.' });
+            }
+
+            const insertQuery = `
+                INSERT INTO role_user (role_id, user_id)
+                VALUES (?, ?)
+            `;
+
+            conn.query(insertQuery, [role_id, user_id], (err, result) => {
+                if (err) return reject({ status: 500, message: 'Error assigning role', err });
+                resolve(result);
+            });
+        });
+    });
+}
+
 dataPool.GetUserRolesByUserId = (userId) => {
     return new Promise((resolve, reject) => {
         const query = `
