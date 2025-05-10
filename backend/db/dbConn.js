@@ -18,16 +18,7 @@ conn.connect((err) => {
 
 let dataPool = {}
 
-dataPool.AuthUser = (username) => {
-    return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM user_login WHERE user_name = ?', username, (err, res, fields) => {
-            if (err) { return reject(err) }
-            return resolve(res)
-        })
-    })
-}
-
-dataPool.RegisterUser = (username) => {
+dataPool.GetUserByUserName = (username) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM user WHERE username = ?', [username], (err, res) => {
             if (err) return reject(err);

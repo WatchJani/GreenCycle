@@ -7,42 +7,38 @@ const bcrypt = require('bcrypt')
 let upload_dest = multer({ dest: 'uploads/' })
 
 users.post('/login', async (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
-    if (username && password) {
-        try {
-            let queryResult = await DB.AuthUser(username);
+    const { username, password } = req.body;
 
-            if (queryResult.length > 0) {
-                if (password === queryResult[0].user_password) {
-                    console.log(queryResult)
-                    console.log("LOGIN OK");
-                    req.session.logged_in = true;
-                    res.json({ success: true, message: "LOGIN OK" });
-                    res.status(200)
-                }
-                else {
-                    console.log("INCORRECT PASSWORD");
-                    res.json({ success: false, message: "INCORRECT PASSWORD" });
-                    res.status(200)
-                }
-            } else {
-                console.log("USER NOT REGISTRED");
-                res.json({ success: false, message: "USER NOT REGISTRED" });
-                res.status(200)
-            }
-        }
-        catch (err) {
-            console.log(err)
-            res.status(404)
-        }
+    if (!username || !password) {
+        console.log("Please enter Username and Password!");
+        return res.status(400).json({ success: false, message: "Please enter Username and Password!" });
     }
-    else {
-        console.log("Please enter Username and Password!")
-        res.json({ success: false, message: "Please enter Username and Password!" });
-        res.status(204)
+
+    try {
+        const queryResult = await DB.GetUserByUserName(username);
+
+        if (queryResult.length === 0) {
+            console.log("USER NOT REGISTERED");
+            return res.status(404).json({ success: false, message: "User not registered" });
+        }
+
+        const user = queryResult[0];
+
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+        if (passwordMatch) {
+            console.log("LOGIN OK");
+            req.session.logged_in = true;
+            return res.status(200).json({ success: true, message: "Login successful" });
+        } else {
+            console.log("INCORRECT PASSWORD");
+            return res.status(401).json({ success: false, message: "Incorrect password" });
+        }
+
+    } catch (err) {
+        console.error("Login error:", err);
+        return res.status(500).json({ success: false, message: "Server error" });
     }
-    res.end();
 });
 
 users.get('/session', async (req, res, next) => {
@@ -73,18 +69,6 @@ users.get('/logout', async (req, res, next) => {
     }
 })
 
-users.get('/list', async (req, res, next) => {
-    try {
-        var queryResult = await DB.allUsers();
-        res.json(queryResult)
-    }
-    catch (err) {
-        console.log(err)
-        res.sendStatus(500)
-    }
-})
-
-
 users.post('/register', upload_dest.single('file'), async (req, res) => {
     try {
         const { username, password, email } = req.body;
@@ -94,7 +78,7 @@ users.post('/register', upload_dest.single('file'), async (req, res) => {
             return res.status(400).json({ error: 'All fields are required, including the file' });
         }
 
-        const existingUsers = await DB.RegisterUser(username);
+        const existingUsers = await DB.GetUserByUserName(username);
         if (existingUsers.length > 0) {
             return res.status(409).json({ error: 'Username already exists' });
         }
