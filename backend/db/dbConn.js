@@ -117,6 +117,39 @@ dataPool.EditMaterial = (material_id, material) => {
 };
 
 
+dataPool.SearchMaterials = ({ name, is_ecologically, is_sensitive, unit }) => {
+    return new Promise((resolve, reject) => {
+        let query = 'SELECT * FROM material WHERE 1=1';
+        const values = [];
+
+        if (name) {
+            query += ' AND name LIKE ?';
+            values.push(`%${name}%`);
+        }
+
+        if (is_ecologically !== undefined) {
+            query += ' AND is_ecologically = ?';
+            values.push(is_ecologically);
+        }
+
+        if (is_sensitive !== undefined) {
+            query += ' AND is_sensitive = ?';
+            values.push(is_sensitive);
+        }
+
+        if (unit) {
+            query += ' AND unit = ?';
+            values.push(unit);
+        }
+
+        conn.query(query, values, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
+
 dataPool.AssignRoleToUser = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
         const checkQuery = `

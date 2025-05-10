@@ -73,4 +73,23 @@ material.put('/:material_id', async (req, res) => {
 });
 
 
+material.get('/search', async (req, res) => {
+    const { name, is_ecologically, is_sensitive, unit } = req.query;
+
+    try {
+        const results = await DB.SearchMaterials({
+            name,
+            is_ecologically,
+            is_sensitive,
+            unit
+        });
+
+        res.status(200).json(results);
+    } catch (err) {
+        console.error("Error searching materials:", err);
+        res.status(500).json({ error: 'Server error while filtering materials.' });
+    }
+});
+
+
 module.exports = material
