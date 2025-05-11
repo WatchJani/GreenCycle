@@ -9,6 +9,7 @@ const port = process.env.PORT || 12345
 const user = require('./routes/user')
 const role = require('./routes/role')
 const material = require('./routes/material')
+const project = require('./routes/project')
 
 const session = require('express-session')
 
@@ -45,7 +46,7 @@ app.get("/", (req, res) => {
 app.use('/user', user)
 app.use('/role', role)
 app.use('/material', material)
-
+app.use('/project', project)
 
 // start the express server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

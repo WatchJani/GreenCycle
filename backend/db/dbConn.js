@@ -177,6 +177,58 @@ dataPool.AssignRoleToUser = (user_id, role_id) => {
     });
 }
 
+dataPool.CreateProject = (project, materials) => {
+    return new Promise((resolve, reject) => {
+        conn.beginTransaction((err) => {
+            if (err) return reject(err);
+
+            const queryProject = `
+                INSERT INTO project 
+                    (title, description, category, difficulty, time_requied, is_published, instruction, create_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const values = [
+                project.title,
+                project.description,
+                project.category,
+                project.difficulty,
+                project.time_required,
+                project.is_published ? 1 : 0,
+                project.instruction,
+                new Date()
+            ];
+
+            conn.query(queryProject, values, (err, result) => {
+                if (err) return conn.rollback(() => reject(err));
+                const projectId = result.insertId;
+
+                if (!materials || materials.length === 0) {
+                    return conn.commit((err) => {
+                        if (err) return conn.rollback(() => reject(err));
+                        resolve(projectId);
+                    });
+                }
+
+                const materialData = materials.map(item => [projectId, item.id, item.quantity]);
+
+                const queryMaterial = `
+                    INSERT INTO material_project (project_id, material_id, quantity)
+                    VALUES ?
+                `;
+
+                conn.query(queryMaterial, [materialData], (err) => {
+                    if (err) return conn.rollback(() => reject(err));
+                    conn.commit((err) => {
+                        if (err) return conn.rollback(() => reject(err));
+                        resolve(projectId);
+                    });
+                });
+            });
+        });
+    });
+};
+
 dataPool.RemoveUserRole = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
         const deleteQuery = `
