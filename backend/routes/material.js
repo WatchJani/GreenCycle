@@ -65,16 +65,25 @@ material.put('/:material_id', async (req, res) => {
         project_id,
         name
     } = req.body;
+    const file = req.file;
+
+    const is_ecologically_bool = is_ecologically === 'true' ? true : false;
+    const is_sensitive_bool = is_sensitive === 'true' ? true : false;
+
+    if (!category || !description || !unit || !name || !file) {
+        return res.status(400).json({ error: 'All fields including file are required.' });
+    }
 
     try {
         await DB.EditMaterial(material_id, {
             category,
             description,
-            is_ecologically,
-            is_sensitive,
+            is_ecologically_bool,
+            is_sensitive_bool,
             unit,
             project_id,
-            name
+            name,
+            file_name: file.filename
         });
 
         res.status(200).json({ message: 'Material successfully updated.' });

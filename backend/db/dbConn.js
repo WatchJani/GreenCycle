@@ -84,10 +84,11 @@ dataPool.EditMaterial = (material_id, material) => {
     const {
         category,
         description,
-        is_ecologically,
-        is_sensitive,
+        is_ecologically_bool,
+        is_sensitive_bool,
         unit,
-        name
+        name,
+        file_name
     } = material;
 
     return new Promise((resolve, reject) => {
@@ -98,15 +99,16 @@ dataPool.EditMaterial = (material_id, material) => {
                 is_ecologically = ?,
                 is_sensitive = ?,
                 unit = ?,
-                name = ?
+                name = ?,
+                icon = ?
             WHERE material_id = ?
         `;
 
         const values = [
             category,
             description,
-            is_ecologically,
-            is_sensitive,
+            is_ecologically_bool,
+            is_sensitive_bool,
             unit,
             name,
             material_id
