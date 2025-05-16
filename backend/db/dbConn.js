@@ -32,10 +32,11 @@ dataPool.AddMaterial = (material) => {
     const {
         category,
         description,
-        is_ecologically,
-        is_sensitive,
+        is_ecologically_bool,
+        is_sensitive_bool,
         unit,
-        name
+        name,
+        file_name
     } = material;
 
     return new Promise((resolve, reject) => {
@@ -46,17 +47,19 @@ dataPool.AddMaterial = (material) => {
                 is_ecologically,
                 is_sensitive,
                 unit,
-                name
-            ) VALUES (?, ?, ?, ?, ?, ?)
+                name,
+                icon
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
             category,
             description,
-            is_ecologically,
-            is_sensitive,
+            is_ecologically_bool,
+            is_sensitive_bool,
             unit,
-            name
+            name,
+            file_name
         ];
 
         conn.query(query, values, (err, result) => {

@@ -35,7 +35,7 @@ users.post('/login', async (req, res) => {
             username: user.username,
             roles: roles
         };
-        
+
         return res.status(200).json({ success: true, message: "Login successful" });
 
     } catch (err) {
