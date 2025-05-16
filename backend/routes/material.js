@@ -54,41 +54,40 @@ material.delete('/:material_id', async (req, res) => {
     }
 });
 
-material.put('/:material_id', async (req, res) => {
+material.put('/:material_id', upload_dest.single('file'), async (req, res) => {
     const { material_id } = req.params;
-    const {
-        category,
-        description,
-        is_ecologically,
-        is_sensitive,
-        unit,
-        project_id,
-        name
-    } = req.body;
     const file = req.file;
+    const body = req.body;
 
-    const is_ecologically_bool = is_ecologically === 'true' ? true : false;
-    const is_sensitive_bool = is_sensitive === 'true' ? true : false;
+    let updates = {};
 
-    if (!category || !description || !unit || !name || !file) {
-        return res.status(400).json({ error: 'All fields including file are required.' });
+    if (body.category) updates.category = body.category;
+    if (body.description) updates.description = body.description;
+    if (body.unit) updates.unit = body.unit;
+    if (body.name) updates.name = body.name;
+    if (body.project_id) updates.project_id = body.project_id;
+
+    if (body.is_ecologically !== undefined) {
+        updates.is_ecologically = body.is_ecologically === 'true';
+    }
+    if (body.is_sensitive !== undefined) {
+        updates.is_sensitive = body.is_sensitive === 'true';
+    }
+
+    if (file) {
+        const ext = file.mimetype.split('/')[1];
+        updates.icon = `${file.filename}.${ext}`;
+    }
+
+    if (Object.keys(updates).length === 0) {
+        return res.status(400).json({ error: 'No fields provided for update.' });
     }
 
     try {
-        await DB.EditMaterial(material_id, {
-            category,
-            description,
-            is_ecologically_bool,
-            is_sensitive_bool,
-            unit,
-            project_id,
-            name,
-            file_name: file.filename
-        });
-
+        await DB.EditMaterial(material_id, updates);
         res.status(200).json({ message: 'Material successfully updated.' });
     } catch (err) {
-        console.error("Error editing material:", err);
+        console.error("Error updating material:", err);
         res.status(500).json({ error: 'Server error while updating material.' });
     }
 });

@@ -80,41 +80,29 @@ dataPool.DeleteMaterial = (material_id) => {
     });
 };
 
-dataPool.EditMaterial = (material_id, material) => {
-    const {
-        category,
-        description,
-        is_ecologically_bool,
-        is_sensitive_bool,
-        unit,
-        name,
-        file_name
-    } = material;
+dataPool.EditMaterial = (material_id, updates) => {
+    const column = [];
+    const value = [];
+
+    for (const key in updates) {
+        column.push(`${key} = ?`);           
+        value.push(updates[key]);
+    }
+
+    if (column.length === 0) {
+        return Promise.resolve();
+    }
+
+    value.push(material_id);
+
+    const sql = `
+        UPDATE material SET
+        ${column.join(', ')}
+        WHERE material_id = ?
+    `;
 
     return new Promise((resolve, reject) => {
-        const query = `
-            UPDATE material SET
-                category = ?,
-                description = ?,
-                is_ecologically = ?,
-                is_sensitive = ?,
-                unit = ?,
-                name = ?,
-                icon = ?
-            WHERE material_id = ?
-        `;
-
-        const values = [
-            category,
-            description,
-            is_ecologically_bool,
-            is_sensitive_bool,
-            unit,
-            name,
-            material_id
-        ];
-
-        conn.query(query, values, (err, result) => {
+        conn.query(sql, value, (err, result) => {
             if (err) return reject(err);
             resolve(result);
         });
