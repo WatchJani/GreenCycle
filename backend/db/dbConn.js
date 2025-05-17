@@ -87,6 +87,27 @@ dataPool.UpdateComment = (comment_id, user_id, content) => {
     });
 };
 
+dataPool.DeleteComment = (comment_id, user_id, user_role) => {
+    return new Promise((resolve, reject) => {
+        let query = 'DELETE FROM comment WHERE comment_id = ?';
+        const values = [comment_id];
+
+        if (user_role !== 'admin' && user_role !== 'moderator') {
+            query += ' AND user_id = ?';
+            values.push(user_id);
+        }
+
+        conn.query(query, values, (err, result) => {
+            if (err) return reject(err);
+            if (result.affectedRows === 0) {
+                return reject(new Error('Comment not found or unauthorized.'));
+            }
+            resolve();
+        });
+    });
+};
+
+
 dataPool.GetProjectDetails = (projectId) => {
     return new Promise((resolve, reject) => {
         const projectQuery = 'SELECT * FROM project WHERE project_id = ?';

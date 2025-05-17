@@ -30,7 +30,7 @@ comment.post('/', async (req, res) => {
 comment.put('/:comment_id', async (req, res) => {
     const { comment_id } = req.params;
     const { content } = req.body;
-   
+
     if (!req.session.user) {
         return res.status(401).json({ error: 'You must be logged in to update comments.' });
     }
@@ -45,6 +45,25 @@ comment.put('/:comment_id', async (req, res) => {
     } catch (err) {
         console.error('Error updating comment:', err.message);
         res.status(404).json({ error: err.message });
+    }
+});
+
+comment.delete('/:comment_id', async (req, res) => {
+    const { comment_id } = req.params;
+
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'You must be logged in to delete comments.' });
+    }
+
+    const userId = req.session.user.user_id;
+    const userRole = req.session.user.roles;
+
+    try {
+        await DB.DeleteComment(comment_id, userId, userRole);
+        res.status(200).json({ message: 'Comment deleted successfully.' });
+    } catch (err) {
+        console.error('Error deleting comment:', err.message);
+        res.status(403).json({ error: err.message });
     }
 });
 
