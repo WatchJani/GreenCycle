@@ -27,6 +27,22 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.UpdateReportStatus = (report_id, status) => {
+    return new Promise((resolve, reject) => {
+        const query = `UPDATE report SET status = ? WHERE report_id = ?`;
+
+        conn.query(query, [status, report_id], (err, result) => {
+            if (err) return reject(err);
+
+            if (result.affectedRows === 0) {
+                return reject(new Error('Report not found'));
+            }
+
+            resolve();
+        });
+    });
+};
+
 dataPool.GetProjectDetails = (projectId) => {
     return new Promise((resolve, reject) => {
         const projectQuery = 'SELECT * FROM project WHERE project_id = ?';
