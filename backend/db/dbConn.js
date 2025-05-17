@@ -43,6 +43,17 @@ dataPool.UpdateReportStatus = (report_id, status) => {
     });
 };
 
+dataPool.GetPendingReports = () => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM report WHERE status = 'pending'`;
+
+        conn.query(query, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
 dataPool.GetProjectDetails = (projectId) => {
     return new Promise((resolve, reject) => {
         const projectQuery = 'SELECT * FROM project WHERE project_id = ?';

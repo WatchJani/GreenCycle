@@ -50,5 +50,19 @@ report.put('/:report_id/status', async (req, res) => {
     }
 });
 
+report.get('/', async (req, res) => {
+     const userRoles = req.session.user.roles || [];
+    if (!userRoles.includes('moderator') && !userRoles.includes('admin')) {
+        return res.status(403).json({ error: 'Forbidden: insufficient permissions.' });
+    }
+    try {
+        const reports = await DB.GetPendingReports();
+        res.status(200).json(reports);
+    } catch (err) {
+        console.error('Error fetching pending reports:', err);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+
 
 module.exports = report;
