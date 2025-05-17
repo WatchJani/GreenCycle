@@ -320,6 +320,19 @@ dataPool.UpdateProject = (projectId, updates, materials, imagePaths) => {
 };
 
 
+dataPool.DeleteProject = (projectId) => {
+    return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM project WHERE project_id = ?';
+        conn.query(query, [projectId], (err, result) => {
+            if (err) return reject(err);
+            if (result.affectedRows === 0) {
+                return reject(new Error('Project not found'));
+            }
+            resolve();
+        });
+    });
+};
+
 dataPool.RemoveUserRole = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
         const deleteQuery = `

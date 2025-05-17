@@ -107,4 +107,16 @@ project.put('/:project_id', upload_dest.fields([
     }
 });
 
+project.delete('/:projectId', async (req, res) => {
+    const { projectId } = req.params;
+
+    try {
+        await DB.DeleteProject(projectId);
+        res.status(200).json({ message: 'Project successfully deleted.' });
+    } catch (err) {
+        console.error("Error deleting project:", err);
+        res.status(500).json({ error: err.message || 'Failed to delete project.' });
+    }
+});
+
 module.exports = project;
