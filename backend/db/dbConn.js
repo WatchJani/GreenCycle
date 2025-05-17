@@ -54,6 +54,21 @@ dataPool.GetPendingReports = () => {
     });
 };
 
+dataPool.AddComment = ({ content, user_id, project_id = null }) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO comment (content, created_at, user_id, project_id)
+            VALUES (?, NOW(), ?, ?)
+        `;
+        const values = [content, user_id, project_id];
+
+        conn.query(query, values, (err, result) => {
+            if (err) return reject(err);
+            resolve(result.insertId);
+        });
+    });
+};
+
 dataPool.GetProjectDetails = (projectId) => {
     return new Promise((resolve, reject) => {
         const projectQuery = 'SELECT * FROM project WHERE project_id = ?';

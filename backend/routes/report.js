@@ -51,7 +51,7 @@ report.put('/:report_id/status', async (req, res) => {
 });
 
 report.get('/', async (req, res) => {
-     const userRoles = req.session.user.roles || [];
+    const userRoles = req.session.user.roles || [];
     if (!userRoles.includes('moderator') && !userRoles.includes('admin')) {
         return res.status(403).json({ error: 'Forbidden: insufficient permissions.' });
     }

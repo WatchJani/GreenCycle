@@ -11,6 +11,7 @@ const role = require('./routes/role')
 const material = require('./routes/material')
 const project = require('./routes/project')
 const report = require('./routes/report')
+const comment = require('./routes/comment')
 
 const session = require('express-session')
 
@@ -49,6 +50,7 @@ app.use('/role', role)
 app.use('/material', material)
 app.use('/project', project)
 app.use('/report', report)
+app.use('/comment', comment)
 
 
 // start the express server
