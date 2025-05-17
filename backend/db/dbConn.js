@@ -103,6 +103,23 @@ dataPool.AddMaterial = (material) => {
     });
 };
 
+dataPool.AddReport = ({ type, reason, user_id, project_id }) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            INSERT INTO report 
+            (type, reason, date_reported, user_id, project_id, status) 
+            VALUES (?, ?, NOW(), ?, ?, 'pending')
+        `;
+
+        const values = [type, reason, user_id, project_id];
+
+        conn.query(query, values, (err, result) => {
+            if (err) return reject(err);
+            resolve(result.insertId);
+        });
+    });
+};
+
 dataPool.DeleteMaterial = (material_id) => {
     return new Promise((resolve, reject) => {
         const query = 'DELETE FROM material WHERE material_id = ?';
