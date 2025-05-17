@@ -27,4 +27,25 @@ comment.post('/', async (req, res) => {
     }
 });
 
+comment.put('/:comment_id', async (req, res) => {
+    const { comment_id } = req.params;
+    const { content } = req.body;
+   
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'You must be logged in to update comments.' });
+    }
+
+    if (!content) {
+        return res.status(400).json({ error: 'Content is required.' });
+    }
+
+    try {
+        await DB.UpdateComment(comment_id, req.session.user.user_id, content);
+        res.status(200).json({ message: 'Comment updated successfully.' });
+    } catch (err) {
+        console.error('Error updating comment:', err.message);
+        res.status(404).json({ error: err.message });
+    }
+});
+
 module.exports = comment;

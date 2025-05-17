@@ -69,6 +69,24 @@ dataPool.AddComment = ({ content, user_id, project_id = null }) => {
     });
 };
 
+dataPool.UpdateComment = (comment_id, user_id, content) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            UPDATE comment
+            SET content = ?
+            WHERE comment_id = ? AND user_id = ?
+        `;
+
+        conn.query(query, [content, comment_id, user_id], (err, result) => {
+            if (err) return reject(err);
+            if (result.affectedRows === 0) {
+                return reject(new Error('Comment not found or user not authorized.'));
+            }
+            resolve();
+        });
+    });
+};
+
 dataPool.GetProjectDetails = (projectId) => {
     return new Promise((resolve, reject) => {
         const projectQuery = 'SELECT * FROM project WHERE project_id = ?';
