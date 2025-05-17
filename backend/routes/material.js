@@ -95,7 +95,6 @@ material.put('/:material_id', upload_dest.single('file'), async (req, res) => {
     }
 });
 
-
 material.get('/search', async (req, res) => {
     const { name, is_ecologically, is_sensitive, unit } = req.query;
 

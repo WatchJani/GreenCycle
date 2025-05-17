@@ -241,6 +241,85 @@ dataPool.CreateProject = (project, materials, imagePaths) => {
     });
 };
 
+dataPool.UpdateProject = (projectId, updates, materials, imagePaths) => {
+    return new Promise((resolve, reject) => {
+        conn.beginTransaction(err => {
+            if (err) return reject(err);
+
+            function updateProject() {
+                if (!updates || Object.keys(updates).length === 0) return Promise.resolve();
+
+                const columns = Object.keys(updates).map(key => `${key} = ?`).join(', ');
+                const values = Object.values(updates);
+                const query = `UPDATE project SET ${columns} WHERE project_id = ?`;
+
+                return new Promise((resolveUpdate, rejectUpdate) => {
+                    conn.query(query, [...values, projectId], (err) => {
+                        if (err) return rejectUpdate(err);
+                        resolveUpdate();
+                    });
+                });
+            }
+
+            function updateMaterials() {
+                if (!materials) return Promise.resolve();
+
+                return new Promise((resolveMat, rejectMat) => {
+                    conn.query('DELETE FROM material_project WHERE project_id = ?', [projectId], err => {
+                        if (err) return rejectMat(err);
+
+                        if (materials.length === 0) return resolveMat();
+
+                        const matData = materials.map(m => [projectId, m.id, m.quantity]);
+
+                        const insertQuery = 'INSERT INTO material_project (project_id, material_id, quantity) VALUES ?';
+                        conn.query(insertQuery, [matData], err => {
+                            if (err) return rejectMat(err);
+                            resolveMat();
+                        });
+                    });
+                });
+            }
+
+            function updateImages() {
+                if (!imagePaths) return Promise.resolve();
+
+                return new Promise((resolveImg, rejectImg) => {
+                    conn.query('DELETE FROM project_images WHERE project_id = ?', [projectId], err => {
+                        if (err) return rejectImg(err);
+
+                        if (imagePaths.length === 0) return resolveImg();
+
+                        const imgData = imagePaths.map(path => [projectId, path]);
+
+                        const insertQuery = 'INSERT INTO project_images (project_id, image_path) VALUES ?';
+                        conn.query(insertQuery, [imgData], err => {
+                            if (err) return rejectImg(err);
+                            resolveImg();
+                        });
+                    });
+                });
+            }
+
+            Promise.all([
+                updateProject(),
+                updateMaterials(),
+                updateImages()
+            ])
+                .then(() => {
+                    conn.commit(err => {
+                        if (err) return conn.rollback(() => reject(err));
+                        resolve();
+                    });
+                })
+                .catch(err => {
+                    conn.rollback(() => reject(err));
+                });
+        });
+    });
+};
+
+
 dataPool.RemoveUserRole = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
         const deleteQuery = `
