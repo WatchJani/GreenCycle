@@ -122,6 +122,18 @@ project.get('/:projectId', async (req, res) => {
     }
 });
 
+project.post('/search', async (req, res) => {
+    const { searchText, category, difficulty, materialName } = req.body;
+
+    try {
+        const projects = await DB.SearchProjects({ searchText, category, difficulty, materialName });
+        res.status(200).json({ projects });
+    } catch (err) {
+        console.error('Error searching projects:', err);
+        res.status(500).json({ error: 'Server error while searching projects.' });
+    }
+});
+
 project.delete('/:projectId', async (req, res) => {
     const { projectId } = req.params;
 

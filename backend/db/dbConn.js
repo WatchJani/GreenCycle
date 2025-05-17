@@ -176,6 +176,56 @@ dataPool.SearchMaterials = ({ name, is_ecologically, is_sensitive, unit }) => {
     });
 };
 
+dataPool.SearchProjects = ({
+    searchText,
+    category,
+    difficulty,
+    materialName
+}) => {
+    return new Promise((resolve, reject) => {
+        let query = `
+            SELECT DISTINCT p.*
+            FROM project p
+            LEFT JOIN material_project mp ON p.project_id = mp.project_id
+            LEFT JOIN material m ON mp.material_id = m.material_id
+            WHERE 1=1
+        `;
+
+        const values = [];
+
+        if (searchText) {
+            query += ` AND (
+                p.title LIKE ? OR 
+                p.description LIKE ? OR 
+                p.instruction LIKE ?
+            )`;
+            const likeSearch = `%${searchText}%`;
+            values.push(likeSearch, likeSearch, likeSearch);
+        }
+
+        if (category) {
+            query += ' AND p.category = ?';
+            values.push(category);
+        }
+
+        if (difficulty) {
+            query += ' AND p.difficulty = ?';
+            values.push(difficulty);
+        }
+
+        if (materialName) {
+            query += ' AND m.name LIKE ?';
+            values.push(`%${materialName}%`);
+        }
+
+        conn.query(query, values, (err, results) => {
+            if (err) return reject(err);
+            resolve(results);
+        });
+    });
+};
+
+
 
 dataPool.AssignRoleToUser = (user_id, role_id) => {
     return new Promise((resolve, reject) => {
