@@ -23,6 +23,9 @@ material.post('/add', upload_dest.single('file'), async (req, res) => {
         return res.status(400).json({ error: 'All fields including file are required.' });
     }
 
+    const ext = file.mimetype.split('/')[1];
+    file_name = `/uploads/${file.filename}.${ext}`;
+
     try {
         await DB.AddMaterial({
             category,
@@ -31,7 +34,7 @@ material.post('/add', upload_dest.single('file'), async (req, res) => {
             is_sensitive_bool,
             unit,
             name,
-            file_name: file.filename
+            file_name,
         });
 
         res.status(201).json({ message: 'Material successfully added.' });
@@ -68,15 +71,15 @@ material.put('/:material_id', upload_dest.single('file'), async (req, res) => {
     if (body.project_id) updates.project_id = body.project_id;
 
     if (body.is_ecologically !== undefined) {
-        updates.is_ecologically = body.is_ecologically === 'true';
+        updates.is_ecologically = body.is_ecologically === 'true' ? true : false;
     }
     if (body.is_sensitive !== undefined) {
-        updates.is_sensitive = body.is_sensitive === 'true';
+        updates.is_sensitive = body.is_sensitive === 'true' ? true : false;
     }
 
     if (file) {
         const ext = file.mimetype.split('/')[1];
-        updates.icon = `${file.filename}.${ext}`;
+        updates.icon = `/uploads/${file.filename}.${ext}`;
     }
 
     if (Object.keys(updates).length === 0) {

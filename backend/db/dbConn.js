@@ -85,7 +85,7 @@ dataPool.EditMaterial = (material_id, updates) => {
     const value = [];
 
     for (const key in updates) {
-        column.push(`${key} = ?`);           
+        column.push(`${key} = ?`);
         value.push(updates[key]);
     }
 
@@ -170,15 +170,15 @@ dataPool.AssignRoleToUser = (user_id, role_id) => {
     });
 }
 
-dataPool.CreateProject = (project, materials) => {
+dataPool.CreateProject = (project, materials, imagePaths) => {
     return new Promise((resolve, reject) => {
         conn.beginTransaction((err) => {
             if (err) return reject(err);
 
             const queryProject = `
                 INSERT INTO project 
-                    (title, description, category, difficulty, time_requied, is_published, instruction, create_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    (title, description, category, difficulty, time_requied, is_published, instruction, thumbnail, create_at, user_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
             const values = [
@@ -187,36 +187,55 @@ dataPool.CreateProject = (project, materials) => {
                 project.category,
                 project.difficulty,
                 project.time_required,
-                project.is_published ? 1 : 0,
+                project.is_published,
                 project.instruction,
-                new Date()
+                project.thumbnail,
+                new Date(),
+                project.user
             ];
 
             conn.query(queryProject, values, (err, result) => {
                 if (err) return conn.rollback(() => reject(err));
                 const projectId = result.insertId;
 
-                if (!materials || materials.length === 0) {
-                    return conn.commit((err) => {
-                        if (err) return conn.rollback(() => reject(err));
-                        resolve(projectId);
+                const insertMaterials = () => {
+                    if (!materials || materials.length === 0) return Promise.resolve();
+                    const materialData = materials.map(item => [projectId, item.id, item.quantity]);
+                    const queryMaterial = `
+                        INSERT INTO material_project (project_id, material_id, quantity)
+                        VALUES ?
+                    `;
+                    return new Promise((resolveMat, rejectMat) => {
+                        conn.query(queryMaterial, [materialData], (err) => {
+                            if (err) return rejectMat(err);
+                            resolveMat();
+                        });
                     });
-                }
+                };
 
-                const materialData = materials.map(item => [projectId, item.id, item.quantity]);
-
-                const queryMaterial = `
-                    INSERT INTO material_project (project_id, material_id, quantity)
-                    VALUES ?
-                `;
-
-                conn.query(queryMaterial, [materialData], (err) => {
-                    if (err) return conn.rollback(() => reject(err));
-                    conn.commit((err) => {
-                        if (err) return conn.rollback(() => reject(err));
-                        resolve(projectId);
+                const insertImages = () => {
+                    if (!imagePaths || imagePaths.length === 0) return Promise.resolve();
+                    const imageData = imagePaths.map(path => [projectId, path]);
+                    const queryImages = `
+                        INSERT INTO project_images (project_id, image_path)
+                        VALUES ?
+                    `;
+                    return new Promise((resolveImg, rejectImg) => {
+                        conn.query(queryImages, [imageData], (err) => {
+                            if (err) return rejectImg(err);
+                            resolveImg();
+                        });
                     });
-                });
+                };
+
+                Promise.all([insertMaterials(), insertImages()])
+                    .then(() => {
+                        conn.commit((err) => {
+                            if (err) return conn.rollback(() => reject(err));
+                            resolve(projectId);
+                        });
+                    })
+                    .catch((err) => conn.rollback(() => reject(err)));
             });
         });
     });
