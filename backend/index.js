@@ -10,6 +10,7 @@ const user = require('./routes/user')
 const role = require('./routes/role')
 const material = require('./routes/material')
 const project = require('./routes/project')
+const report = require('./routes/report')
 
 const session = require('express-session')
 
@@ -47,6 +48,8 @@ app.use('/user', user)
 app.use('/role', role)
 app.use('/material', material)
 app.use('/project', project)
+app.use('/report', report)
+
 
 // start the express server
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
