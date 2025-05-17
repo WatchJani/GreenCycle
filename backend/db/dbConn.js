@@ -27,6 +27,40 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.GetProjectDetails = (projectId) => {
+    return new Promise((resolve, reject) => {
+        const projectQuery = 'SELECT * FROM project WHERE project_id = ?';
+        const materialsQuery = `
+            SELECT mp.material_id, mp.quantity, m.name, m.category, m.unit, m.description, m.is_ecologically, m.is_sensitive, m.icon
+            FROM material_project mp
+            JOIN material m ON mp.material_id = m.material_id
+            WHERE mp.project_id = ?
+        `;
+        const imagesQuery = 'SELECT image_path FROM project_images WHERE project_id = ?';
+
+        conn.query(projectQuery, [projectId], (err, projectRows) => {
+            if (err) return reject(err);
+            if (projectRows.length === 0) return reject(new Error('Project not found'));
+
+            const project = projectRows[0];
+
+            conn.query(materialsQuery, [projectId], (err, materialsRows) => {
+                if (err) return reject(err);
+
+                conn.query(imagesQuery, [projectId], (err, imagesRows) => {
+                    if (err) return reject(err);
+
+                    resolve({
+                        project,
+                        materials: materialsRows,
+                        images: imagesRows.map(row => row.image_path),
+                    });
+                });
+            });
+        });
+    });
+};
+
 
 dataPool.AddMaterial = (material) => {
     const {
