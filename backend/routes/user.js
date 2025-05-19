@@ -57,6 +57,25 @@ users.get('/session', async (req, res, next) => {
     }
 })
 
+
+users.get('/authentication', async (req, res, next) => {
+    try {
+        if (!req.session.user || !req.session.user.user_id) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+
+        const user = await GetUserByUserId(req.session.user.user_id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (err) {
+        console.error('Session error:', err);
+        next(err);
+    }
+});
+
 users.get('/logout', async (req, res, next) => {
     try {
         req.session.destroy(function (err) {
@@ -76,6 +95,8 @@ users.post('/register', upload_dest.single('file'), async (req, res) => {
     try {
         const { username, password, email } = req.body;
         const file = req.file;
+
+        console.log(username, password, email, file)
 
         if (!username || !password || !email || !file) {
             return res.status(400).json({ error: 'All fields are required, including the file' });

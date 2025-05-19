@@ -27,6 +27,16 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.GetUserByUserId = (userid) => {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT * FROM user WHERE user_id = ?', [userid], (err, res) => {
+            if (err) return reject(err);
+            return resolve(res);
+        });
+    });
+}
+
+
 dataPool.UpdateReportStatus = (report_id, status) => {
     return new Promise((resolve, reject) => {
         const query = `UPDATE report SET status = ? WHERE report_id = ?`;
