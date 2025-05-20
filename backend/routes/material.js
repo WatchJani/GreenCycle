@@ -111,5 +111,14 @@ material.get('/search', async (req, res) => {
     }
 });
 
+material.get('/', async (req, res) => {
+    try {
+        const materials = await DB.GetAllMaterials();
+        res.status(200).json({ materials });
+    } catch (error) {
+        console.error('Error fetching materials:', error);
+        res.status(500).json({ message: 'Error retrieving materials' });
+    }
+});
 
 module.exports = material
