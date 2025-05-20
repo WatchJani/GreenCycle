@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://88.200.63.148:8081',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
@@ -38,8 +38,7 @@ app.use(session({
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000, // 1 dan
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Dodatna sigurnost
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
