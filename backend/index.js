@@ -16,27 +16,28 @@ const comment = require('./routes/comment')
 const session = require('express-session')
 
 app.set('trust proxy', 1) // trust first proxy
-app.use(session({
-    secret: 'some secret',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}))
 
 //Some configurations
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: 'http://localhost:12345',
-    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
-    credentials: true
-}))
 
 // configurations
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    methods: ["GET", "POST", "PUT"],
-}))
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
+
+app.use(session({
+  secret: 'some secret',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    secure: false,
+    sameSite: 'lax'
+  }
+}));
 
 
 // actual routes

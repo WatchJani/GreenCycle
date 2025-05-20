@@ -61,7 +61,6 @@ users.get('/session', async (req, res, next) => {
     }
 })
 
-
 users.get('/authentication', async (req, res, next) => {
     try {
         if (!req.session.user || !req.session.user.user_id) {
