@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { loginUser } from '../api/api';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+    const { login } = useAuth();
+
     const [form, setForm] = useState({
         username: '',
         password: '',
@@ -19,7 +22,10 @@ const Login = () => {
         e.preventDefault();
         try {
             const res = await loginUser(form);
-            console.log('Login successful:', res);
+            if (res.data && res.data.user) {
+                login(res.data.user);
+            }
+            console.log('Login successful:', res.data);
         } catch (err) {
             console.error('Login error:', err.response?.data || err.message);
         }
