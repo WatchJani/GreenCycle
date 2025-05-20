@@ -24,26 +24,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true
 }));
 
 app.use(session({
-  secret: 'some secret',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: false,
-    sameSite: 'lax'
-  }
+    secret: 'some secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        path: '/',
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 1 dan
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000) // Dodatna sigurnost
+    }
 }));
 
-
-// actual routes
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"))
-})
 
 // app.use('/project', novice)
 app.use('/user', user)
@@ -54,6 +53,6 @@ app.use('/report', report)
 app.use('/comment', comment)
 
 
-// start the express server
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+const indexPath = path.join(__dirname, 'dist', 'index.html');
 
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
