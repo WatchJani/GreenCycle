@@ -67,4 +67,18 @@ comment.delete('/:comment_id', async (req, res) => {
     }
 });
 
+comment.get('/:project_id', async (req, res) => {
+    const { project_id } = req.params;
+
+
+    try {
+        const comments = await DB.GetCommentsByProjectId(project_id);
+        res.status(200).json({ comments });
+    } catch (error) {
+        console.error('Error getting comments:', error);
+        res.status(500).json({ message: 'Error retrieving comments' });
+    }
+});
+
+
 module.exports = comment;

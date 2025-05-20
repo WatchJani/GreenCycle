@@ -27,6 +27,24 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
+dataPool.GetCommentsByProjectId = (projectId) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+      SELECT c.comment_id, c.content, c.created_at, c.user_id, c.project_id,
+             u.username, u.profile_picture
+      FROM comment c
+      JOIN user u ON c.user_id = u.user_id
+      WHERE c.project_id = ?
+      ORDER BY c.created_at DESC
+    `;
+
+        conn.query(query, [projectId], (err, res) => {
+            if (err) return reject(err);
+            return resolve(res);
+        });
+    });
+};
+
 
 dataPool.UpdateReportStatus = (report_id, status) => {
     return new Promise((resolve, reject) => {
