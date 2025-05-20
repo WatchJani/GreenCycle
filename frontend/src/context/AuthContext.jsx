@@ -13,10 +13,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const userData = await getSessionUser();
-                if (userData) setUser(userData);
+                // const userData = await getSessionUser();
+                // if (userData) setUser(userData);
             } catch (err) {
-                console.log('No active session');
+                // console.log('No active session');
             } finally {
                 setLoading(false);
             }

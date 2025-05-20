@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { registerUser } from '../api/api';
 
 const Register = () => {
     const [form, setForm] = useState({
@@ -22,10 +22,8 @@ const Register = () => {
         try {
             const res = await registerUser(form);
             console.log('Registration successful:', res);
-            alert('Registration successful!');
         } catch (err) {
             console.error('Registration error:', err.response?.data || err.message);
-            alert('Registration failed!');
         }
     };
 
