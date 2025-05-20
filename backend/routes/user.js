@@ -27,16 +27,20 @@ users.post('/login', async (req, res) => {
             return res.status(401).json({ success: false, message: "Incorrect password" });
         }
 
-        const roles = await DB.GetUserRolesByUserId(user.user_id);
+        const fullUser = await DB.GetUserById(user.user_id);
 
         req.session.logged_in = true;
         req.session.user = {
             user_id: user.user_id,
             username: user.username,
-            roles: roles
+            roles: fullUser.roles
         };
 
-        return res.status(200).json({ success: true, message: "Login successful" });
+        return res.status(200).json({
+            success: true,
+            message: "Login successful",
+            user: fullUser
+        });
 
     } catch (err) {
         console.error("Login error:", err);
@@ -64,7 +68,7 @@ users.get('/authentication', async (req, res, next) => {
             return res.status(401).json({ message: 'Not authenticated' });
         }
 
-        const user = await GetUserByUserId(req.session.user.user_id);
+        const user = await DB.GetUserById(req.session.user.user_id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

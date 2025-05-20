@@ -27,15 +27,6 @@ dataPool.GetUserByUserName = (username) => {
     });
 }
 
-dataPool.GetUserByUserId = (userid) => {
-    return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM user WHERE user_id = ?', [userid], (err, res) => {
-            if (err) return reject(err);
-            return resolve(res);
-        });
-    });
-}
-
 
 dataPool.UpdateReportStatus = (report_id, status) => {
     return new Promise((resolve, reject) => {
@@ -544,21 +535,36 @@ dataPool.RemoveUserRole = (user_id, role_id) => {
     });
 }
 
-dataPool.GetUserRolesByUserId = (userId) => {
+dataPool.GetUserById = (userId) => {
     return new Promise((resolve, reject) => {
-        const query = `
-            SELECT r.name 
+        const userQuery = `
+            SELECT user_id, username, email, profile_picture, points
+            FROM user
+            WHERE user_id = ?
+        `;
+
+        const rolesQuery = `
+            SELECT r.role_id, r.name, r.description
             FROM role_user ru
             JOIN role r ON ru.role_id = r.role_id
             WHERE ru.user_id = ?
         `;
 
-        conn.query(query, [userId], (err, results) => {
+        conn.query(userQuery, [userId], (err, userResults) => {
             if (err) return reject(err);
-            resolve(results.map(row => row.name));
+            if (userResults.length === 0) return resolve(null); // user not found
+
+            const user = userResults[0];
+
+            conn.query(rolesQuery, [userId], (err, roleResults) => {
+                if (err) return reject(err);
+
+                user.roles = roleResults;
+                resolve(user);
+            });
         });
     });
-}
+};
 
 
 dataPool.GetUsersWithPermissions = () => {
