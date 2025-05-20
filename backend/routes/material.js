@@ -23,8 +23,7 @@ material.post('/add', upload_dest.single('file'), async (req, res) => {
         return res.status(400).json({ error: 'All fields including file are required.' });
     }
 
-    const ext = file.mimetype.split('/')[1];
-    file_name = `/uploads/${file.filename}.${ext}`;
+    file_name = `/uploads/${file.filename}`;
 
     try {
         await DB.AddMaterial({
@@ -78,8 +77,7 @@ material.put('/:material_id', upload_dest.single('file'), async (req, res) => {
     }
 
     if (file) {
-        const ext = file.mimetype.split('/')[1];
-        updates.icon = `/uploads/${file.filename}.${ext}`;
+        updates.icon = `/uploads/${file.filename}`;
     }
 
     if (Object.keys(updates).length === 0) {

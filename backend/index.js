@@ -52,6 +52,6 @@ app.use('/report', report)
 app.use('/comment', comment)
 
 
-const indexPath = path.join(__dirname, 'dist', 'index.html');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

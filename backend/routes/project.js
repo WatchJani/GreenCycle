@@ -10,7 +10,7 @@ project.post('/', upload_dest.fields([
     { name: 'images', maxCount: 10 }
 ]), async (req, res) => {
     if (!req.session || !req.session.user) {
-        return res.status(401).json({ error: 'Korisnik nije prijavljen.' });
+        return res.status(401).json({ error: 'User is not loged in.' });
     }
 
     const {
@@ -33,8 +33,8 @@ project.post('/', upload_dest.fields([
     const thumbnailFile = req.files['thumbnail']?.[0];
     const imageFiles = req.files['images'] || [];
 
-    const thumbnailPath = thumbnailFile ? `/uploads/${thumbnailFile.filename}.${thumbnailFile.mimetype.split('/')[1]}` : null;
-    const imagePaths = imageFiles.map(file => `/uploads/${file.filename}.${file.mimetype.split('/')[1]}`);
+    const thumbnailPath = thumbnailFile ? `/uploads/${thumbnailFile.filename}` : null;
+    const imagePaths = imageFiles.map(file => `/uploads/${file.filename}`);
 
     try {
         const projectId = await DB.CreateProject({
@@ -79,8 +79,7 @@ project.put('/:project_id', upload_dest.fields([
     }
 
     if (thumbnailFile) {
-        const ext = thumbnailFile.mimetype.split('/')[1];
-        updates.thumbnail = `/uploads/${thumbnailFile.filename}.${ext}`;
+        updates.thumbnail = `/uploads/${thumbnailFile.filename}`;
     }
 
     if (
