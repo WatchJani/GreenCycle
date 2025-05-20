@@ -33,7 +33,7 @@ users.post('/login', async (req, res) => {
         req.session.user = {
             user_id: user.user_id,
             username: user.username,
-            roles: fullUser.roles
+            roles: fullUser.roles.map(role => role.name)
         };
 
         return res.status(200).json({

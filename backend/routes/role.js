@@ -15,11 +15,17 @@ role.get('/', async (req, res) => {
 role.post('/assign', async (req, res) => {
     const sessionUser = req.session.user;
 
+
+    console.log(sessionUser.roles)
+
     if (!sessionUser || !sessionUser.roles || !sessionUser.roles.includes('admin')) {
         return res.status(403).json({ error: 'Only admins can assign roles.' });
     }
 
     const { user_id, role_id } = req.body;
+
+    
+
 
     if (!user_id || !role_id) {
         return res.status(400).json({ error: 'Missing user_id or role_id.' });
