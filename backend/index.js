@@ -43,7 +43,6 @@ app.use(session({
 }));
 
 
-// app.use('/project', novice)
 app.use('/user', user)
 app.use('/role', role)
 app.use('/material', material)
@@ -53,5 +52,7 @@ app.use('/comment', comment)
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

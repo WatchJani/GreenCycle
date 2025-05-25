@@ -9,6 +9,7 @@ project.post('/', upload_dest.fields([
     { name: 'thumbnail', maxCount: 1 },
     { name: 'images', maxCount: 10 }
 ]), async (req, res) => {
+
     if (!req.session || !req.session.user) {
         return res.status(401).json({ error: 'User is not loged in.' });
     }
@@ -28,7 +29,10 @@ project.post('/', upload_dest.fields([
         return res.status(400).json({ error: 'All required fields must be filled in.' });
     }
 
+     console.log(materials)
     const parsedMaterials = materials ? JSON.parse(materials) : [];
+    console.log(parsedMaterials)
+
 
     const thumbnailFile = req.files['thumbnail']?.[0];
     const imageFiles = req.files['images'] || [];
