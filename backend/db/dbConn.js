@@ -49,7 +49,7 @@ dataPool.GetAllMaterials = () => {
   return new Promise((resolve, reject) => {
     const query = `
       SELECT material_id, category, description, is_ecologically, is_sensitive, unit, name, icon
-      FROM material
+      FROM material ORDER BY material_id DESC
     `;
     conn.query(query, (err, res) => {
       if (err) return reject(err);

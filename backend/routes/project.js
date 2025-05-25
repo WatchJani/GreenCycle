@@ -97,8 +97,7 @@ project.put('/:project_id', upload_dest.fields([
     const parsedMaterials = body.materials ? JSON.parse(body.materials) : [];
 
     const imagePaths = imageFiles.map(file => {
-        const ext = file.mimetype.split('/')[1];
-        return `/uploads/${file.filename}.${ext}`;
+        return `/uploads/${file.filename}`;
     });
 
     try {

@@ -50,7 +50,6 @@ app.use('/project', project)
 app.use('/report', report)
 app.use('/comment', comment)
 
-
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.static(path.join(__dirname, 'build')));
