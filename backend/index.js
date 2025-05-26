@@ -43,15 +43,19 @@ app.use(session({
 }));
 
 
-app.use('/user', user)
-app.use('/role', role)
-app.use('/material', material)
-app.use('/project', project)
-app.use('/report', report)
-app.use('/comment', comment)
+app.use('/api/v1/user', user)
+app.use('/api/v1/role', role)
+app.use('/api/v1/material', material)
+app.use('/api/v1/project', project)
+app.use('/api/v1/report', report)
+app.use('/api/v1/comment', comment)
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.static(path.join(__dirname, 'build')));
+
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
