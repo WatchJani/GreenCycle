@@ -1,85 +1,13 @@
 nohup: ignoring input
 Example app listening on port 12345!
 Connection established
-Janko janko jankokondic100@gmail.com {
+admin admin test@gmail.com {
   fieldname: 'file',
-  originalname: 'blas.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'uploads/',
-  filename: 'c39560c900aa84fd12d140466cb509d8',
-  path: 'uploads/c39560c900aa84fd12d140466cb509d8',
-  size: 52295
-}
-Janko janko jankokondic100@gmail.com {
-  fieldname: 'file',
-  originalname: 'blas.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'uploads/',
-  filename: '5031a2fe1811ddbf6d1a4fc8bc264229',
-  path: 'uploads/5031a2fe1811ddbf6d1a4fc8bc264229',
-  size: 52295
-}
-Janko janko jankokondic100@gmail.com {
-  fieldname: 'file',
-  originalname: 'blas.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'uploads/',
-  filename: '365755aa39af72c5a4847b8a8bf0a42a',
-  path: 'uploads/365755aa39af72c5a4847b8a8bf0a42a',
-  size: 52295
-}
-Janko janko jankokondic100@gmail.com {
-  fieldname: 'file',
-  originalname: 'blas.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'uploads/',
-  filename: '63beb4af01413a26b6107631251b950c',
-  path: 'uploads/63beb4af01413a26b6107631251b950c',
-  size: 52295
-}
-Janko72 janko jankokondic100@gmail.com {
-  fieldname: 'file',
-  originalname: 'blas.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  destination: 'uploads/',
-  filename: '0409d716c726fa774eae733f8b8e9e12',
-  path: 'uploads/0409d716c726fa774eae733f8b8e9e12',
-  size: 52295
-}
-[{"id":30,"quantity":1},{"id":26,"quantity":1},{"id":22,"quantity":1},{"id":31,"quantity":1},{"id":21,"quantity":1},{"id":38,"quantity":1},{"id":32,"quantity":1}]
-[
-  { id: 30, quantity: 1 },
-  { id: 26, quantity: 1 },
-  { id: 22, quantity: 1 },
-  { id: 31, quantity: 1 },
-  { id: 21, quantity: 1 },
-  { id: 38, quantity: 1 },
-  { id: 32, quantity: 1 }
-]
-Tom tom12345 tom@gmail.com {
-  fieldname: 'file',
-  originalname: 'profile12.png',
+  originalname: 'Screenshot from 2025-05-27 18-30-36.png',
   encoding: '7bit',
   mimetype: 'image/png',
   destination: 'uploads/',
-  filename: '8f8120b01d2adc2447e2ed950f4d6aa2',
-  path: 'uploads/8f8120b01d2adc2447e2ed950f4d6aa2',
-  size: 134150
+  filename: '4c74e880e53e1efca5be0ae17f34d9ae',
+  path: 'uploads/4c74e880e53e1efca5be0ae17f34d9ae',
+  size: 276405
 }
-[{"id":30,"quantity":1},{"id":26,"quantity":1},{"id":22,"quantity":1},{"id":31,"quantity":1},{"id":21,"quantity":1},{"id":32,"quantity":1},{"id":19,"quantity":1}]
-[
-  { id: 30, quantity: 1 },
-  { id: 26, quantity: 1 },
-  { id: 22, quantity: 1 },
-  { id: 31, quantity: 1 },
-  { id: 21, quantity: 1 },
-  { id: 32, quantity: 1 },
-  { id: 19, quantity: 1 }
-]
-[ 'admin', 'moderator', 'user' ]
-[ 'admin', 'moderator', 'user' ]

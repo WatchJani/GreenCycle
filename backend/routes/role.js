@@ -15,9 +15,6 @@ role.get('/', async (req, res) => {
 role.post('/assign', async (req, res) => {
     const sessionUser = req.session.user;
 
-
-    console.log(sessionUser.roles)
-
     if (!sessionUser || !sessionUser.roles || !sessionUser.roles.includes('admin')) {
         return res.status(403).json({ error: 'Only admins can assign roles.' });
     }

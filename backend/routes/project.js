@@ -29,7 +29,7 @@ project.post('/', upload_dest.fields([
         return res.status(400).json({ error: 'All required fields must be filled in.' });
     }
 
-     console.log(materials)
+    console.log(materials)
     const parsedMaterials = materials ? JSON.parse(materials) : [];
     console.log(parsedMaterials)
 
